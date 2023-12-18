@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Receiver</title>
+	<form action="sender2.html">
+        <input type='submit' id='senderBtn' value='Be Sender'>
+    </form>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        p {
+            color: #333;
+            font-size: 18px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #ffffff;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #output2 {
+            font-size: 18px;
+            color: #333;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <p>Received messages:</p>
+    <ul id="chat"></ul>
+    <button type='button' id='Decrypt' onclick='decrypt()'>Decrypt the message</button>
+    <p id='output2'></p>
+
+    <script>
+        const socket = new WebSocket('ws://localhost:8080');
+
+        socket.onmessage = function (event) {
+            const chat = document.getElementById('chat');
+            const listItem = document.createElement('li');
+            listItem.textContent = event.data;
+            chat.appendChild(listItem);
+        };
+
+        function decrypt() {
+            const Alphadb = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", " "];
+
+            const chat = document.getElementById('chat');
+            const lastMessage = chat.lastChild;
+
+            if (lastMessage) {
+                let en = lastMessage.textContent;
+                let key = en.length;
+                let dec = "";
+
+                for (let i = 0; i < en.length; i++) {
+                    let c = Alphadb.indexOf(en[i]);
+                    let b = c - key;
+                    dec += Alphadb[(b + 27) % 27];
+                    key--;
+                }
+
+                document.getElementById('output2').innerHTML = dec;
+            } else {
+                alert("No message to decrypt");
+            }
+        }
+    </script>
+</body>
+
+</html>

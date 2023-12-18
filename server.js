@@ -7,8 +7,8 @@ const server = http.createServer((request, response) => {
     response.end();
 });
 
-server.listen(8080, () => {
-    console.log('Server is listening on port 8080');
+server.listen(port, '0.0.0.0', () => {
+  console.log(`Server is running on http://0.0.0.0:${port}`);
 });
 
 const wsServer = new WebSocket({
